@@ -80,3 +80,18 @@ def main():
 # Run the program
 if __name__ == "__main__":
     main()
+
+
+"""
+References:
+
+https://www.w3schools.com/python/python_datetime.asp
+https://pynative.com/python/datetime/
+https://www.pythontutorial.net/python-standard-library/python-datetime/
+https://www.w3schools.com/python/python_json.asp
+https://docs.python.org/3/library/json.html
+https://www.geeksforgeeks.org/json-with-python/
+https://www.w3schools.com/python/module_os.asp
+https://pythongeeks.org/python-os-module/
+
+"""
