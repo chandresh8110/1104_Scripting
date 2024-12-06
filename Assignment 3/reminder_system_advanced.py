@@ -6,109 +6,63 @@ This is an assignment 3 for Scripting.
 
 """
 
-
 import time
 from datetime import datetime
-import os
-import winsound  # For sound notifications (Windows)
-from colorama import Fore, Style, init
-
-# Initialize colorama
-init(autoreset=True)
+from plyer import notification
 
 REMINDER_FILE = "reminders.txt"
 
 def add_reminder():
-    """Add a new reminder with date and time validation."""
+    """Add a new reminder."""
     description = input("Enter the reminder description: ")
-
-    while True:
-        date = input("Enter the date (YYYY-MM-DD): ")
-        try:
-            datetime.strptime(date, "%Y-%m-%d")
-            break
-        except ValueError:
-            print(Fore.RED + "Invalid date format. Please use YYYY-MM-DD.")
-
-    while True:
-        time_input = input("Enter the time (HH:MM, 24-hour format): ")
-        try:
-            datetime.strptime(time_input, "%H:%M")
-            break
-        except ValueError:
-            print(Fore.RED + "Invalid time format. Please use HH:MM.")
-
+    reminder_time = input("Enter the reminder time (YYYY-MM-DD HH:MM): ")
+    
     with open(REMINDER_FILE, "a") as file:
-        file.write(f"{description}|{date}|{time_input}\n")
-
-    print(Fore.GREEN + "Reminder added successfully!\n")
-
-def view_reminders():
-    """Display all saved reminders."""
-    print(Fore.CYAN + "\nUpcoming Reminders:")
-    if not os.path.exists(REMINDER_FILE):
-        print(Fore.YELLOW + "No reminders found.")
-        return
-
-    with open(REMINDER_FILE, "r") as file:
-        reminders = file.readlines()
-        if reminders:
-            for reminder in reminders:
-                description, date, time = reminder.strip().split('|')
-                print(Fore.LIGHTBLUE_EX + f"- {description} on {date} at {time}")
-        else:
-            print(Fore.YELLOW + "No reminders found.")
-    print()
+        file.write(f"{description}|{reminder_time}\n")
+    
+    print("Reminder added successfully!")
 
 def check_reminders():
-    """Check if any reminder matches the current date and time and trigger a notification."""
+    """Check for due reminders and send notifications."""
     now = datetime.now()
-    current_date = now.strftime("%Y-%m-%d")
-    current_time = now.strftime("%H:%M")
-
-    if not os.path.exists(REMINDER_FILE):
-        return
+    current_time = now.strftime("%Y-%m-%d %H:%M")
 
     with open(REMINDER_FILE, "r") as file:
         reminders = file.readlines()
 
-    with open(REMINDER_FILE, "w") as file:  # Rewrite file without triggered reminders
-        for reminder in reminders:
-            description, date, time = reminder.strip().split('|')
-            if date == current_date and time == current_time:
-                print(Fore.MAGENTA + f"\n⏰ Reminder: {description} now!")
-                play_sound()
-            else:
-                file.write(reminder)
+    for reminder in reminders:
+        description, reminder_time = reminder.strip().split('|')
+        if reminder_time == current_time:
+            send_notification(description)
 
-def play_sound():
-    """Play a sound notification when a reminder is triggered."""
-    frequency = 1000  # Frequency in Hz
-    duration = 500    # Duration in ms
-    winsound.Beep(frequency, duration)
+def send_notification(message):
+    """Send a notification."""
+    notification.notify(
+        title="Reminder",
+        message=message,
+        timeout=10
+    )
+    print(f"Notification sent: {message}")
 
 def main():
-    """Main function to run the reminder system."""
+    """Main loop for the reminder system."""
     while True:
-        print(Fore.YELLOW + "1. Add a Reminder")
-        print(Fore.YELLOW + "2. View Reminders")
-        print(Fore.YELLOW + "3. Exit\n")
-
-        choice = input(Fore.CYAN + "Enter your choice: ")
+        print("\n1. Add Reminder")
+        print("2. Check Reminders")
+        print("3. Exit")
+        choice = input("Choose an option: ")
 
         if choice == '1':
             add_reminder()
         elif choice == '2':
-            view_reminders()
+            check_reminders()
         elif choice == '3':
-            print(Fore.GREEN + "Exiting...")
+            print("Exiting...")
             break
         else:
-            print(Fore.RED + "Invalid choice. Please try again.\n")
+            print("Invalid choice. Please try again.")
 
-        print(Fore.CYAN + "Checking reminders...")
-        check_reminders()
-        time.sleep(60)  # Wait for 60 seconds before checking reminders again
+        time.sleep(10)  # Check reminders every minute
 
 if __name__ == "__main__":
     main()
