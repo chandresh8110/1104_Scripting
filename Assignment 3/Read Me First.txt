@@ -1,0 +1,7 @@
+First of all
+
+install plyer using pip install plyer
+
+then run this file
+
+python reminder_system_advanced.py
