@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Test0",
+    "cpu": 1,
+    "memory": 256,
+    "bandwidth": "test0"
+  },
+  {
+    "name": "2",
+    "cpu": 512,
+    "memory": 512,
+    "bandwidth": "test0"
+  }
+]
